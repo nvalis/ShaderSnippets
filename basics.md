@@ -4,7 +4,7 @@
 vec2 uv = (2.*gl_FragCoord.xy-resolution.xy)/resolution.x;
 ```
 
-Given an display aspect ratio of `ar = resolution.x/resolution.y` it returns coordinates in: `x ∈ [-1,1] ⊗ y ∈ [-1/ar,1/ar]`.
+Given an display aspect ratio of `ar = resolution.x/resolution.y` it returns coordinates in: x ∈ [-1,1] ⊗ y ∈ [-1/ar,1/ar].
 
 # Basic raytracer
 

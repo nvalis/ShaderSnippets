@@ -9,24 +9,25 @@ Given an display aspect ratio of `ar = resolution.x/resolution.y` it returns coo
 # Basic raytracer
 
 ```GLSL
-bool raytrace(vec3 ro, vec3 rd, out vec3 p) {
-	float f = 0.;
-	
-	const float FMAX = 10.;
-	
-	for (int i=0; i<256; i++) {
-		p = ro+f*rd;
-		float d = scene(p);
-		if (d <= EPS) return true;
-		if (f > FMAX) return false;
-		f += d;
+float refd = 1./0.;
+void raytrace(vec3 ro, vec3 rd, out vec3 p) {
+	p = ro;
+	float d;
+	vec3 n;
+	for (int i=0; i<256; i++) { 
+		p += rd*(d=scene(p));
+		if (d<EPS) {
+			if(refd==d) {
+				p += EPS*(n=normal(p));
+				rd = reflect(rd, n);
+			}
+			else break;
+		}
 	}
-	
-	return false;
 }
 ```
 
-Returns if the casted ray with origin `ro` and direction `rd` hit an object defined in the `scene()` function. `p` returns the `vec3` hit position with `FMAX` denoting the furthest distance to probe and `EPS` the resolution of declaring a hit.
+Returns the hit position of a casted ray with origin `ro` and direction `rd` of an object defined in the `scene()` function. `p` returns the `vec3` hit position with `EPS` denoting the resolution of declaring a hit. A global `float refd` is used to determine if a reflecting object was hit and the ray has to be reflected. The value of `refd` is updated in each call of the `scene()` function.
 
 ## Camera setup
 
@@ -48,7 +49,7 @@ Returns a `mat3` to be multiplied with the ray direction `ro` (typically `vec3 r
 vec3 normal(vec3 p) {
 	vec2 e = vec2(EPS, 0.);
 	float d = scene(p);
-	return normalize(vec3(d-scene(p+e.xyy), d-scene(p+e.yxy), d-scene(p+e.yyx)));
+	return normalize(vec3(scene(p+e.xyy)-d, scene(p+e.yxy)-d, scene(p+e.yyx)-d));
 }
 ```
 

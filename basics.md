@@ -31,16 +31,15 @@ Returns if the casted ray with origin `ro` and direction `rd` hit an object defi
 ## Camera setup
 
 ```GLSL
-mat3 camera(vec3 ro, vec3 t, float cr) {
-	vec3 cw = normalize(t-ro);
-	vec3 cp = vec3(sin(cr), cos(cr),0.0);
-	vec3 cu = normalize(cross(cw,cp));
-	vec3 cv = normalize(cross(cu,cw));
-    return mat3(cu, cv, cw);
+mat3 camera(vec3 ro, vec3 t, float r) {
+	vec3 f = normalize(t-ro);
+	vec3 u = vec3(sin(r),cos(r),0.);
+	vec3 s = normalize(cross(f,u));
+    return mat3(s, u, -f);
 }
 ```
 
-Returns a `mat3` to be multiplied with the ray direction `ro` (typically `vec3 rd = normalized(vec3(uv.xy, 1.));`) to get the proper ray direction for raymarching. The given `vec3 t` defines the lookat target and the 
+Returns a `mat3` to be multiplied with the ray direction `ro` (typically `vec3 rd = normalized(vec3(uv.xy, -1.));`) to get the proper ray direction for raymarching. The given `vec3 t` defines the lookat target and `float r` the rotation angle of the up vector. Formular from [khronos.org](https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml).
 
 
 # Normal calculation
